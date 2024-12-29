@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genova RV</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #8e44ad, #9b59b6); /* Colores lilas */
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            font-size: 4em;
+            margin: 0;
+            padding: 0;
+            animation: fadeIn 3s ease-out;
+        }
+        p {
+            font-size: 1.5em;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-out 1s;
+        }
+        .btn {
+            background-color: #fff;
+            color: #8e44ad; /* Color lila */
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 30px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background-color: #9b59b6; /* Color lila más oscuro */
+            transform: scale(1.1);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>- TERRAFORM -</h1>
+    <p>Subir archivo desde Terraform a bucket, génova rodríguez vázquez</p>
+    <a href="#" class="btn">Empezar</a>
+
+</body>
+</html>
