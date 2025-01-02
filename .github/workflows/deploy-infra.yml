@@ -1,0 +1,104 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout Code       
+        uses: actions/checkout@v3 
+
+      # -----------------------------------------------------------------------------------------------------------------------
+      # Configurar credenciales y bucket según el actor  
+      - name: Configurar credenciales y bucket según el actor    
+        run: |
+          # Definir las credenciales en un mapa  
+          declare -A aws_credentials=(
+            ["GenovaRV"]="${{ secrets.AWS_ACCESS_KEY_ID_GENOVARV }}:${{ secrets.AWS_SECRET_ACCESS_KEY_GENOVARV }}:${{ secrets.AWS_SESSION_TOKEN_GENOVARV }}:genova_rv/environments"
+            ["diegoperezcampusdual"]="${{ secrets.AWS_ACCESS_KEY_ID_DIEGOPEREZCAMPUSDUAL }}:${{ secrets.AWS_SECRET_ACCESS_KEY_DIEGOPEREZCAMPUSDUAL }}:${{ secrets.AWS_SESSION_TOKEN_DIEGOPEREZCAMPUSDUAL }}:diego"
+            ["Saragn24"]="${{ secrets.AWS_ACCESS_KEY_ID_SARA }}:${{ secrets.AWS_SECRET_ACCESS_KEY_SARA }}:${{ secrets.AWS_SESSION_TOKEN_SARA }}:sara"
+            ["Hordtail"]="${{ secrets.AWS_ACCESS_KEY_ID_BGM }}:${{ secrets.AWS_SECRET_ACCESS_KEY_BGM }}:${{ secrets.AWS_SESSION_TOKEN_BGM }}:brais/environments"
+            ["CristianSousaVidal"]="${{ secrets.AWS_ACCESS_KEY_ID_CSV }}:${{ secrets.AWS_SECRET_ACCESS_KEY_CSV }}:${{ secrets.AWS_SESSION_TOKEN_CSV }}:cristian/environments"
+          )
+           
+          # Obtener las credenciales para el actor actual
+          credentials=${aws_credentials["${{ github.actor }}"]}
+          
+          if [ -z "$credentials" ]; then
+            echo "Usuario no reconocido: ${{ github.actor }}"
+            exit 1
+          fi
+          
+          # Separar las credenciales
+          IFS=":" read -r AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN TERRAFORM_USER <<< "$credentials"
+          
+          # Establecer las variables de entorno
+          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV 
+          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV 
+          echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $GITHUB_ENV
+          echo "TERRAFORM_USER=$TERRAFORM_USER" >> $GITHUB_ENV  # Exportar TERRAFORM_USER al entorno de GitHub Actions
+
+      # -----------------------------------------------------------------------------------------------------------------------
+
+      - name: Install Terraform
+        run: |
+          # Instalar dependencias necesarias
+          sudo apt-get update -y
+          sudo apt-get install -y gnupg software-properties-common curl
+
+          # Descargar la clave GPG de HashiCorp y añadirla al sistema
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - 
+
+          # Añadir el repositorio de HashiCorp con el archivo de clave GPG
+          sudo apt-add-repository "deb https://apt.releases.hashicorp.com/ $(lsb_release -cs) main"       
+
+          # Actualizar la lista de paquetes
+          sudo apt-get update -y
+
+          # Instalar Terraform
+          sudo apt-get install -y terraform
+
+          echo "env.AWS_ACCESS_KEY_ID"
+          echo "env.AWS_SECRET_ACCESS_KEY"          
+          echo "env.AWS_SESSION_TOKEN"
+
+      # -----------------------------------------------------------------------------------------------------------------------
+
+      - name: Configurar AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}  
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}      
+          aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+          aws-region: eu-west-3
+              
+        env:
+            AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
+            AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
+
+      # -----------------------------------------------------------------------------------------------------------------------
+
+      # Desplegar con Terraform
+      - name: Deploy with Terraform
+        run: |
+          env
+          pwd
+          echo "terraform/environments/${{ env.TERRAFORM_USER }}"  # Imprimir el directorio de Terraform
+          cd terraform/environments/${{ env.TERRAFORM_USER }}  # Cambiar al directorio según el usuario
+          terraform init  # Inicializar Terraform
+          terraform plan  # Ver el plan de ejecución
+          terraform apply -auto-approve  # Aplicar los cambios  
+
+
+
+          
+      
+       
+
+ 
