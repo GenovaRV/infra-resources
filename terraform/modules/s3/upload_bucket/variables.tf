@@ -17,3 +17,8 @@ variable "acl" {
   description = "El nivel de acceso, puede ser privado, público, etc."
   default     = "private"
 }
+
+variable "region" {
+  description = "La región en la que se desplegarán los recursos"
+  default        = "eu-west-3"
+}
