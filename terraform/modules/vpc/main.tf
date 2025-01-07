@@ -1,3 +1,6 @@
+provider "aws" {
+  region = var.aws_region
+}
 
 resource "aws_vpc" "this" {
   cidr_block           = var.vpc_cidr
@@ -77,10 +80,10 @@ resource "aws_security_group" "web_sg" {
 }
 
 resource "aws_instance" "web" {
-  ami                         = var.ami_id
-  instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.public.id
-  vpc_security_group_ids      = [aws_security_group.web_sg.id]
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
 
   user_data = <<-EOF
               #!/bin/bash
@@ -88,7 +91,7 @@ resource "aws_instance" "web" {
               sudo yum install -y httpd
               sudo systemctl start httpd
               sudo systemctl enable httpd
-              echo '${file("web_projects/prueba-tf-vpc/index.html")}' > /var/www/html/index.html
+              echo '${file("${path.module}/../../web_projects/prueba-tf-vpc/index.html")}' > /var/www/html/index.html
               EOF
 
   tags = {
