@@ -1,20 +1,10 @@
-variable "aws_region" {
-  description = "Región de AWS"
+variable "vpc_id" {
+  description = "ID de la VPC"
   type        = string
 }
 
-variable "vpc_name" {
-  description = "Nombre de la VPC"
-  type        = string
-}
-
-variable "vpc_cidr" {
-  description = "CIDR block de la VPC"
-  type        = string
-}
-
-variable "availability_zones" {
-  description = "Lista de zonas de disponibilidad"
+variable "private_subnet_ids" {  # Verifica que esta variable esté definida
+  description = "Lista de IDs de subredes privadas"
   type        = list(string)
 }
 
@@ -56,9 +46,4 @@ variable "password" {
 variable "parameter_group_name" {
   description = "Nombre del grupo de parámetros de la base de datos"
   type        = string
-}
-
-variable "subnet_count" {
-  description = "Número de subredes a crear"
-  type        = number
 }

@@ -3,17 +3,8 @@ output "vpc_id" {
   value       = aws_vpc.this.id
 }
 
-output "subnet_id" {
-  description = "ID de la subred pública"
-  value       = aws_subnet.public.id
+output "private_subnet_ids" {
+  description = "IDs de las subredes privadas"
+  value       = aws_subnet.private[*].id
 }
 
-output "instance_id" {
-  description = "ID de la instancia EC2"
-  value       = aws_instance.web.id
-}
-
-output "instance_public_ip" {
-  description = "IP pública de la instancia EC2"
-  value       = aws_instance.web.public_ip
-}
