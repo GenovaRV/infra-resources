@@ -1,6 +1,6 @@
 variable "instance_name" {
   description = "El nombre que se asignará a la instancia EC2"
-  default     = "instancia-c2-genovarv"
+  default     = "instancia-ec2-grv"
 }
 
 variable "ami_id" {
