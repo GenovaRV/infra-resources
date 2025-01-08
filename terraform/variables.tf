@@ -3,6 +3,11 @@ variable "aws_region" {
   type        = string
 }
 
+variable "aws_profile" {
+  description = "Perfil de AWS"
+  type        = string
+}
+
 variable "vpc_name" {
   description = "Nombre de la VPC"
   type        = string
