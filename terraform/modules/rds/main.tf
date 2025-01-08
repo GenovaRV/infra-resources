@@ -1,3 +1,8 @@
+# ------------------------------------------------------------------
+# El RDS, es un servicio de base de datos relacional administrado 
+# por AWS.
+# ------------------------------------------------------------------
+
 module "security_group" {
   source  = "../security_group"
   vpc_id  = var.vpc_id
